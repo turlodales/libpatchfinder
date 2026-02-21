@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <stdint.h>
+#include "elfpatchfinder32.hpp"
 #include "machopatchfinder32.hpp"
 #include "ibootpatchfinder32.hpp"
 #include "ibootpatchfinder64.hpp"

@@ -242,7 +242,9 @@ uint32_t patchfinder32::find_register_value_thumb(loc_t where, uint8_t reg, loc_
                 case arm32::ldr:
                     if (insn.subtype() == arm32::st_immediate) {
                         value[insn.rt()] += insn.imm(); // XXX address, not actual value
-                    }else{
+                    }else if (insn.subtype() == arm32::st_literal) {
+                        value[insn.rt()] = _vmemThumb->deref(insn.imm());
+                    } else {
                         value[insn.rt()] = value[insn.rn()];
                     }
                     break;

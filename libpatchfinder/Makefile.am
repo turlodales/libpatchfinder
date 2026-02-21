@@ -17,9 +17,11 @@ libpatchfinder_la_SOURCES =	patch.cpp \
 							StableHash.cpp \
 							patchfinder.cpp \
 							patchfinder32.cpp \
-							patchfinder64.cpp
+							patchfinder64.cpp \
+							elfpatchfinder32.cpp 
+
 
 if WITH_MACHO
 libpatchfinder_la_SOURCES +=  machopatchfinder32.cpp \
-							                  machopatchfinder64.cpp
+							                machopatchfinder64.cpp
 endif #WITH_MACHO
