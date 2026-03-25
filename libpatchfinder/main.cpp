@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <stdint.h>
+#include "elfpatchfinder32.hpp"
 #include "machopatchfinder32.hpp"
 #include "ibootpatchfinder32.hpp"
 #include "ibootpatchfinder64.hpp"
@@ -27,6 +28,7 @@ using namespace tihmstar::patchfinder;
 
 int main(int argc, const char * argv[]) {
     printf("start\n");
+
     std::vector<patch> patches;
     ibootpatchfinder *ibpf = nullptr;
     kernelpatchfinder *kpf = nullptr;
@@ -68,7 +70,7 @@ int main(int argc, const char * argv[]) {
 //    addpatch(ibpf->get_atv4k_enable_uart_patch());
 //    addpatch(ibpf->get_ra1nra1n_patch());
 //    addpatch(ibpf->replace_cmd_with_memcpy("reboot"));
-//    addpatch(ibpf->get_boot_arg_patch("-v serial=3 rd=md0"));
+    addpatch(ibpf->get_boot_arg_patch("-v serial=3"));
 //    addpatch(ibpf->get_no_force_dfu_patch());
 //    addpatch(ibpf->get_wtf_pwndfu_patch());
 //    addpatch(ibpf->get_sep_load_raw_patch());
@@ -79,7 +81,7 @@ int main(int argc, const char * argv[]) {
 //    debug("asd=0x%016llx",asd);
     
 //    addpatch(kpf->get_allow_UID_key_patch());
-    addpatch(kpf->get_codesignature_patches());
+//    addpatch(kpf->get_codesignature_patches());
 //    addpatch(kpf->get_trustcache_true_patch());
 //    addpatch(kpf->get_mount_patch());
 //    addpatch(kpf->get_sandbox_patch());
@@ -115,13 +117,13 @@ int main(int argc, const char * argv[]) {
     
     for (auto p : patches) {
         printf(": Applying patch=0x%016llx : ",p._location);
-        for (int i=0; i<p._patchSize; i++) {
-            printf("%02x",((uint8_t*)p._patch)[i]);
+        for (int i=0; i<p.getPatchSize(); i++) {
+            printf("%02x",((uint8_t*)p.getPatch())[i]);
         }
-        if (p._patchSize == 4) {
-            printf(" 0x%08x",*(uint32_t*)p._patch);
-        } else if (p._patchSize == 2) {
-            printf(" 0x%04x",*(uint16_t*)p._patch);
+        if (p.getPatchSize() == 4) {
+            printf(" 0x%08x",*(uint32_t*)p.getPatch());
+        } else if (p.getPatchSize() == 2) {
+            printf(" 0x%04x",*(uint16_t*)p.getPatch());
         }
         printf("\n");
     }
