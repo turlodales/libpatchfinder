@@ -237,7 +237,16 @@ uint32_t patchfinder32::find_register_value_thumb(loc_t where, uint8_t reg, loc_
                     value[insn.rd()] = insn.imm();
                     break;
                 case arm32::add:
-                    value[insn.rd()] = value[insn.rn()] + insn.imm();
+                    if (insn.subtype() == arm32::st_register){
+                        uint8_t ldr_reg = insn.rd();
+                        if (insn.rm() == 15/*pc*/) {
+                            value[ldr_reg] += insn.pc() + 4;
+                        }else{
+                            //TODO
+                        }
+                    }else if (insn.subtype() == arm32::st_immediate){
+                        value[insn.rd()] = value[insn.rn()] + insn.imm();
+                    }
                     break;
                 case arm32::ldr:
                     if (insn.subtype() == arm32::st_immediate) {
@@ -331,7 +340,7 @@ patchfinder32::loc_t patchfinder32::find_literal_ref_arm(loc_t pos, int ignoreTi
 patchfinder32::loc_t patchfinder32::find_literal_ref_thumb(loc_t pos, int ignoreTimes, loc_t startPos){
     vmem_thumb iter = _vmemThumb->getIter(startPos);
     try {
-        int64_t refval[16] = {};
+        int32_t refval[16] = {};
         for (;;++iter){
             auto insn = iter();
             if (insn == arm32::ldr && insn.subtype() == arm32::st_literal) {
